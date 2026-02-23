@@ -1,14 +1,44 @@
+# =========================
 # Virtual Environment
+# =========================
 .venv/
+venv/
+env/
 
-# Python cache
+# =========================
+# Python Cache
+# =========================
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
 
-# Packaging
+# =========================
+# Jupyter Notebook
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Build / Packaging
+# =========================
 *.egg-info/
 build/
 dist/
+*.whl
 
-# Environment variables
+# =========================
+# ML Project Outputs
+# =========================
+artifacts/
+logs/
+catboost_info/
+
+# =========================
+# Environment Variables
+# =========================
 .env
+
+# =========================
+# OS Files
+# =========================
+.DS_Store
+Thumbs.db
