@@ -21,38 +21,43 @@ def save_obj(file_path,obj):
     except Exception as e:
         raise CustomException(e,sys)
     
-def evaluate_model(x_train,y_train,x_test,y_test,models,params):
+def evaluate_model(x_train, y_train, x_test, y_test, models, params):
+    report = {}
+    trained_models = {}
+
+    for model_name, model in models.items():
+
+        param = params[model_name]
+
+        if param:
+            randomcv = RandomizedSearchCV(
+                estimator=model,
+                param_distributions=param,
+                scoring='r2',
+                n_iter=50,
+                n_jobs=-1,
+                cv=5,
+                random_state=1
+            )
+
+            randomcv.fit(x_train, y_train)
+            best_model = randomcv.best_estimator_
+
+        else:
+            model.fit(x_train, y_train)
+            best_model = model
+
+        y_test_pred = best_model.predict(x_test)
+        test_score = r2_score(y_test, y_test_pred)
+
+        report[model_name] = test_score
+        trained_models[model_name] = best_model
+
+    return report, trained_models
+    
+def load_obj(file_path):
     try:
-        report={}
-        for i in range(len(list(models))):
-            model_name=list(models.keys())[i]
-            model=list(models.values())[i]
-            param=params[model_name]
-
-            if param:
-                randomcv=RandomizedSearchCV(
-                    estimator=model,
-                    param_distributions=param,
-                    scoring='r2',
-                    n_iter=50,
-                    n_jobs=-1,
-                    cv=5,
-                    verbose=0,
-                    random_state=1
-                )
-                randomcv.fit(x_train,y_train)
-                y_train_pred=randomcv.predict(x_train)
-                y_test_pred=randomcv.predict(x_test)
-            else:
-                model.fit(x_train,y_train)
-                y_train_pred=model.predict(x_train)
-                y_test_pred=model.predict(x_test)
-
-            train_score=r2_score(y_train,y_train_pred)
-            test_score=r2_score(y_test,y_test_pred)
-
-            report[model_name]=test_score
-
-        return report
+        with open(file_path,'rb') as file_obj:
+            return dill.load(file_obj)
     except Exception as e:
         raise CustomException(e,sys)
