@@ -68,8 +68,6 @@ class DataTransformation:
         except Exception as e:
             raise CustomException(e,sys)
         
-        save_obj(file_path=self.data_transformation_config.preprocessor_obj_path,obj=preprocessor)
-        
         return preprocessor
     
     def initiate_data_transformation(self,train_path,test_path):
@@ -106,6 +104,8 @@ class DataTransformation:
 
             train_arr=np.c_[x_train_arr,np.array(y_train)]
             test_arr=np.c_[x_test_arr,np.array(y_test)]
+
+            save_obj(file_path=self.data_transformation_config.preprocessor_obj_path,obj=preprocess_obj)
 
             return (
                 train_arr,
